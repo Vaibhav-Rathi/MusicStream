@@ -1,4 +1,3 @@
-// src/youtube.d.ts
 declare namespace YT {
   interface Player {
     loadVideoById(videoId: string): void;
@@ -7,7 +6,7 @@ declare namespace YT {
 
   interface PlayerEvent {
     target: Player;
-    data: number; // Event data (PlayerState)
+    data: number;
   }
 
   enum PlayerState {

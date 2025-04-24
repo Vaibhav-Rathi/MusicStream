@@ -92,16 +92,14 @@ export default function StreamPage() {
       }
     };
 
-    // Set up polling every 3 seconds
     pollingInterval.current = setInterval(pollData, 3000);
     
-    // Clean up on unmount
     return () => {
       if (pollingInterval.current) {
         clearInterval(pollingInterval.current);
       }
     };
-  }, [queue, currentStream?.id]); // Re-establish the interval if these change
+  }, [queue, currentStream?.id]); 
 
   useEffect(() => {
     const tag = document.createElement('script')
