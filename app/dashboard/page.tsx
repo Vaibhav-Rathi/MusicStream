@@ -6,7 +6,6 @@ import { useState, useEffect, useRef } from "react"
 import { ThumbsUp, Music, ExternalLink, Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout } from "@/lib/auth"
-import Image from "next/image"
 
 type StreamType = "YOUTUBE" | "SPOTIFY"
 
@@ -79,7 +78,6 @@ export default function StreamPage() {
           setQueue(sortedQueue);
         }
         
-        // Only update current stream if it's different
         if (active && (!currentStream || active.id !== currentStream.id)) {
           setCurrentStream(active);
         } else if (!active && currentStream) {
@@ -440,7 +438,7 @@ export default function StreamPage() {
 
                 {videoPreview && (
                   <div className="flex gap-4 bg-gray-900 rounded-lg p-3 border border-gray-700">
-                    <Image
+                    <img
                       src={videoPreview.thumbnail || "/placeholder.svg"}
                       alt={videoPreview.title}
                       className="w-30 h-[68px] object-cover rounded"
@@ -511,7 +509,7 @@ export default function StreamPage() {
                           <span className="font-semibold text-gray-300 text-sm">{voteCount}</span>
                         </div>
                         
-                        <Image
+                        <img
                           src={stream.thumbnailUrl || "/placeholder.svg"}
                           alt={stream.title}
                           className="w-24 h-16 object-cover rounded"
