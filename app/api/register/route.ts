@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         name,
         email,
         password: hashedPassword,
-        provider: provider as Provider, // Just cast to our local Provider type
+        provider: provider as Provider,
         verificationToken,
         verificationTokenExpiry: tokenExpiry,
       }
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     try {
       await sendVerificationEmail(email, verificationToken);
-    } catch (emailError) {
+    } catch (emailError: unknown) {
       console.error('Error sending verification email:', emailError);
       return NextResponse.json(
         { 
@@ -59,7 +59,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { password: _, verificationToken: __, verificationTokenExpiry: ___, ...userWithoutSensitiveInfo } = user;
+    // Remove sensitive fields
+    const { password: _password, verificationToken: _vt, verificationTokenExpiry: _vte, ...userWithoutSensitiveInfo } = user;
     
     return NextResponse.json(
       { 
@@ -68,10 +69,11 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Registration error:', error);
     return NextResponse.json(
-      { message: 'Something went wrong', error: error.message },
+      { message: 'Something went wrong', error: errorMessage },
       { status: 500 }
     );
   }

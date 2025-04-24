@@ -57,10 +57,14 @@ export async function POST(request: NextRequest) {
       { message: "If an account with that email exists, a reset link has been sent." },
       { status: 200 }
     );
-  } catch (error: any) {
+  }catch (error: unknown) {
     console.error("Forgot password error:", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
     return NextResponse.json(
-      { message: "Something went wrong", error: error.message },
+      { message: "Something went wrong", error: errorMessage },
       { status: 500 }
     );
   }

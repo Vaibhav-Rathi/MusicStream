@@ -13,12 +13,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Find user with this token
     const user = await prismaClient.user.findFirst({
       where: {
         verificationToken: token,
         verificationTokenExpiry: {
-          gte: new Date() // Token must not be expired
+          gte: new Date()
         }
       }
     });
@@ -30,7 +29,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Update user to mark email as verified
     await prismaClient.user.update({
       where: { id: user.id },
       data: {
@@ -40,12 +38,12 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Redirect to verification success page
     return NextResponse.redirect(new URL('/verification-success', request.url));
-  } catch (error: any) {
-    console.error('Email verification error:', error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Email verification error:', message);
     return NextResponse.json(
-      { message: 'Something went wrong', error: error.message },
+      { message: 'Something went wrong', error: message },
       { status: 500 }
     );
   }

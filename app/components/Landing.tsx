@@ -40,7 +40,7 @@ export default function Dashboard(): JSX.Element {
               </h1>
               <div className="h-1 w-24 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-4 rounded-full"></div>
               <p className="max-w-[600px] mx-auto text-purple-200 text-lg">
-                Experience the rhythm of the crowd — share and discover music with fans around the world.
+                Experience the rhythm of the crowd share and discover music with fans around the world.
               </p>
             </div>
             
@@ -62,7 +62,11 @@ export default function Dashboard(): JSX.Element {
                   </p>
                   <Button 
                     onClick={() => {
-                      session?.data?.user ? router.push('/dashboard') : signIn()
+                      if (session?.data?.user) {
+                        router.push('/dashboard');
+                      } else {
+                        signIn();
+                      }
                     }} 
                     className="mt-2 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white border-0 w-full"
                   >

@@ -31,7 +31,18 @@ interface Stream {
 declare global {
   interface Window {
     YT: {
-      Player: new (elementId: string, options: any) => any;
+      Player: new (
+        elementId: string,
+        options: {
+          videoId: string;
+          events?: {
+            onReady?: (event: YT.PlayerEvent) => void;
+            onStateChange?: (event: YT.OnStateChangeEvent) => void;
+          };
+          playerVars?: Record<string, any>;
+        }
+      ) => YT.Player;
+      
       PlayerState: {
         ENDED: number;
       };
@@ -48,7 +59,7 @@ export default function StreamPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
   const [currentUserId, setCurrentUserId] = useState<string>("")
-  const playerRef = useRef<any>(null)
+  const playerRef = useRef<YT.Player | null>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null)
   const [lastPolled, setLastPolled] = useState(Date.now())
   const pollingInterval = useRef<NodeJS.Timeout | null>(null)

@@ -35,6 +35,7 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@types/youtube": "^0.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
     "prisma": "^6.6.0",
