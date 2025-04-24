@@ -2,8 +2,9 @@ import { prismaClient } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { Provider } from "@prisma/client";
 import { sendVerificationEmail } from "@/lib/email";
+
+type Provider = 'Google' | 'Credentials';
 
 interface RegistrationRequestBody {
   name: string;
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
         name,
         email,
         password: hashedPassword,
-        provider: provider as Provider,
+        provider: provider as Provider, // Just cast to our local Provider type
         verificationToken,
         verificationTokenExpiry: tokenExpiry,
       }
