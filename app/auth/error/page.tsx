@@ -1,10 +1,10 @@
-// app/auth/error/page.tsx
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function AuthError() {
+const AuthError = () => {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
   
@@ -42,4 +42,12 @@ export default function AuthError() {
       </div>
     </div>
   );
-}
+};
+
+const AuthErrorPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <AuthError />
+  </Suspense>
+);
+
+export default AuthErrorPage;

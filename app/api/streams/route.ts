@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { StreamSchema } from "../schema/route";
+import { StreamSchema } from "../schema/schema";
 import { prismaClient } from "@/lib/db";
 
 const YT_REGEX = /^https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}(&.*)?$/;

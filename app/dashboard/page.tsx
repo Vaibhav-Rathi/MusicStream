@@ -52,9 +52,9 @@ export default function StreamPage() {
   const [lastPolled, setLastPolled] = useState(Date.now())
   const pollingInterval = useRef<NodeJS.Timeout | null>(null)
 
-  const baseUrl = process.env.NEXTAUTH_URL
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
-  useEffect(() => {
+  useEffect(() => {    
     const pollData = async () => {
       try {
         const response = await axios.get(`${baseUrl}/api/streams/all`);
@@ -63,7 +63,6 @@ export default function StreamPage() {
         const queueItems = fetchedStreams.filter((stream: Stream) => stream.active === false);
         const sortedQueue = sortQueueByVotes(queueItems);
         
-        // Only update if there's a change in the queue
         if (JSON.stringify(sortedQueue.map(s => s.id)) !== JSON.stringify(queue.map(s => s.id)) ||
             JSON.stringify(sortedQueue.map(s => s.upvotes?.length)) !== JSON.stringify(queue.map(s => s.upvotes?.length))) {
           setQueue(sortedQueue);

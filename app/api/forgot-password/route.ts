@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${resetToken}`;
 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_SERVER_HOST,

@@ -2,7 +2,7 @@
 
 import { signOut } from 'next-auth/react';
 
-const baseUrl = process.env.NEXTAUTH_URL
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
 export const logout = async () => {
   localStorage.removeItem('userId');

@@ -1,7 +1,7 @@
 import { prismaClient } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { UpvoteSchema } from "../../schema/route";
+import { UpvoteSchema } from "../../schema/schema";
 
 
 export async function POST (req:NextRequest){

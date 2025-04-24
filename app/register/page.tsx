@@ -4,10 +4,10 @@ import { useState, type FormEvent, useEffect } from "react"
 import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { EyeIcon, EyeOffIcon, AlertCircle, Check, RefreshCw } from "lucide-react"
 
-const baseUrl = process.env.NEXTAUTH_URL
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function RegisterPage() {
   const [email, setEmail] = useState<string>("")
@@ -141,14 +141,20 @@ export default function RegisterPage() {
       } else {
         router.push("/register/resend-verification")
       }
-    } catch (err: any) {
-      if (err.response?.status === 409) {
-        setError("Email already in use")
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 409) {
+          setError("Email already in use");
+        } else {
+          setError(err.response?.data?.message || err.message || "Something went wrong");
+        }
+      } else if (err instanceof Error) {
+        setError(err.message || "An unexpected error occurred");
       } else {
-        setError(err.response?.data?.message || err.message || "Something went wrong")
+        setError("An unknown error occurred");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -318,7 +324,7 @@ export default function RegisterPage() {
                 required
               />
               {confirmPassword && password !== confirmPassword && (
-                <div className="text-sm text-red-600 mt-1">Passwords don't match</div>
+                <div className="text-sm text-red-600 mt-1">Passwords do not match</div>
               )}
             </div>
           </div>

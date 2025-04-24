@@ -11,7 +11,7 @@ export async function sendVerificationEmail(email: string, token: string): Promi
     secure: false
   });
 
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/api/verify-email?token=${token}`;
+  const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
