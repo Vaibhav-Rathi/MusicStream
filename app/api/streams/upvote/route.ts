@@ -26,6 +26,6 @@ export async function POST (req:NextRequest){
         })
         return NextResponse.json({Created_Upvote: createdUpvote}, {status:200})
     }catch(e){
-        return NextResponse.json({message : "Failed to create a upvote"})
+        return NextResponse.json({message : "Failed to create a upvote", e})
     }
 }

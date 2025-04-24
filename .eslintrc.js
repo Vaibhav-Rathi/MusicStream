@@ -2,6 +2,7 @@ module.exports = {
     extends: 'next/core-web-vitals',
     ignorePatterns: ['app/generated/**/*'], 
     rules: {
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
     overrides: [
       {
