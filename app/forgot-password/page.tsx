@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -18,14 +18,18 @@ const ForgotPassword = () => {
     try {
       const res = await axios.post(`${baseUrl}/api/forgot-password`, { email });
       setMessage(res.data.message);
-    } catch (err: any) {
-      setMessage(
-        err?.response?.data?.message || "Something went wrong. Please try again."
-      );
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setMessage(
+          err?.response?.data?.message || "Something went wrong. Please try again."
+        );
+      } else {
+        setMessage("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

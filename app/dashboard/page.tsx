@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react"
 import { ThumbsUp, Music, ExternalLink, Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout } from "@/lib/auth"
+import Image from "next/image"
 
 type StreamType = "YOUTUBE" | "SPOTIFY"
 
@@ -103,7 +104,7 @@ export default function StreamPage() {
     return () => {
       window.onYouTubeIframeAPIReady = () => {}
     }
-  }, [])
+  })
 
   useEffect(() => {
     if (currentStream && window.YT && window.YT.Player) {
@@ -112,30 +113,29 @@ export default function StreamPage() {
   }, [currentStream])
 
   const initializePlayer = () => {
-    if (!currentStream || !playerContainerRef.current) return
-    
+    if (!currentStream || !playerContainerRef.current) return;
+  
     if (playerRef.current && playerRef.current.loadVideoById) {
-      // Check if the function exists before calling it
-      playerRef.current.loadVideoById(currentStream.extractedId)
+      playerRef.current.loadVideoById(currentStream.extractedId);
     } else {
-      // First time initialization
       playerRef.current = new window.YT.Player('youtube-player', {
         videoId: currentStream.extractedId,
         events: {
           onStateChange: onPlayerStateChange,
-          onReady: (event: any) => {
-            event.target.playVideo()
+          onReady: (event: YT.PlayerEvent) => {
+            event.target.playVideo();
           }
         },
         playerVars: {
           autoplay: 1,
           controls: 1
         }
-      })
+      });
     }
-  }
+  };
   
-  const onPlayerStateChange = (event: any) => {
+  
+  const onPlayerStateChange = (event: YT.PlayerEvent) => {
     if (event.data === window.YT.PlayerState.ENDED) {
       playNextSong()
     }
@@ -241,22 +241,13 @@ export default function StreamPage() {
     }, 0);
     
     fetchStreams();
-  }, []);
+  }, [baseUrl]);
 
   const handleUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value
     setVideoUrl(url)
     setError("")
     
-    const videoId = getYoutubeVideoId(url)
-    if (videoId) {
-      try {
-      } catch (err) {
-        console.error('Error fetching video preview:', err)
-      }
-    } else {
-      setVideoPreview(null)
-    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -284,19 +275,10 @@ export default function StreamPage() {
       setVideoUrl("");
       setVideoPreview(null);
     } catch (error) {
+      console.log(error);
       setError("Failed to add video to queue");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const getYoutubeVideoId = (url?: string) => {
-    if (!url) return null;
-    try {
-      const urlObj = new URL(url);
-      return urlObj.searchParams.get("v") || url.split('youtu.be/')[1];
-    } catch (error) {
-      return null;
     }
   };
   
@@ -371,7 +353,7 @@ export default function StreamPage() {
 
             {/* Center title */}
             <div className="absolute left-1/2 transform -translate-x-1/2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-400">
-              Creator's Stream
+              Creators Stream
             </div>
 
             {/* Logout button */}
@@ -450,7 +432,7 @@ export default function StreamPage() {
 
                 {videoPreview && (
                   <div className="flex gap-4 bg-gray-900 rounded-lg p-3 border border-gray-700">
-                    <img
+                    <Image
                       src={videoPreview.thumbnail || "/placeholder.svg"}
                       alt={videoPreview.title}
                       className="w-30 h-[68px] object-cover rounded"
@@ -521,7 +503,7 @@ export default function StreamPage() {
                           <span className="font-semibold text-gray-300 text-sm">{voteCount}</span>
                         </div>
                         
-                        <img
+                        <Image
                           src={stream.thumbnailUrl || "/placeholder.svg"}
                           alt={stream.title}
                           className="w-24 h-16 object-cover rounded"
