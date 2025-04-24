@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // eslint-disable @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, verificationToken: _vt, verificationTokenExpiry: _vte, ...userWithoutSensitiveInfo } = user;
     
     return NextResponse.json(
