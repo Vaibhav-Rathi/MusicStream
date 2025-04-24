@@ -8,7 +8,7 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const baseUrl = process.env.NEXTAUTH_URL
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

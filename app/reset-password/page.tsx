@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import ResetPassword from "./ResetPassword"; // assuming this is the file name
+import ResetPassword from "./ResetPassword";
 
 const ResetPasswordWithSuspense = () => (
   <Suspense fallback={<div>Loading...</div>}>
