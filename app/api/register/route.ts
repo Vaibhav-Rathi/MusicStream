@@ -59,8 +59,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Remove sensitive fields
+    // eslint-disable @typescript-eslint/no-unused-vars
     const { password: _password, verificationToken: _vt, verificationTokenExpiry: _vte, ...userWithoutSensitiveInfo } = user;
+    // eslint-enable @typescript-eslint/no-unused-vars
     
     return NextResponse.json(
       { 
