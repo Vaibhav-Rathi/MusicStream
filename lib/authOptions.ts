@@ -4,7 +4,9 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { Provider } from "@prisma/client";
+
+// Define the Provider type locally to match your schema
+type Provider = 'Google' | 'Credentials';
 
 // Extended types for NextAuth
 declare module "next-auth" {
