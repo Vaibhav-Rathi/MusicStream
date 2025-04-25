@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react"
 import { ThumbsUp, Music, ExternalLink, Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout } from "@/lib/auth"
+import { useRouter } from "next/navigation"
 
 type StreamType = "YOUTUBE" | "SPOTIFY"
 
@@ -61,8 +62,16 @@ export default function StreamPage() {
   const playerContainerRef = useRef<HTMLDivElement>(null)
   const [lastPolled, setLastPolled] = useState(Date.now())
   const pollingInterval = useRef<NodeJS.Timeout | null>(null)
+  const router = useRouter();
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+
+  useEffect(() => {
+    const email = localStorage.getItem('email')
+    if (!email) {
+      router.push('/login')
+    }
+  }, [])
 
   useEffect(() => {    
     const pollData = async () => {
