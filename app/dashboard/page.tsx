@@ -39,7 +39,7 @@ declare global {
             onReady?: (event: YT.PlayerEvent) => void;
             onStateChange?: (event: YT.OnStateChangeEvent) => void;
           };
-          playerVars?: Record<string, string | number | boolean>; // Specify more specific type
+          playerVars?: Record<string, string | number | boolean>;
         }
       ) => YT.Player;
       PlayerState: {

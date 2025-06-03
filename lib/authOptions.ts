@@ -1,14 +1,11 @@
-// lib/authOptions.ts
 import { prismaClient } from "@/lib/db";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
-// Define the Provider type locally to match your schema
 type Provider = 'Google' | 'Credentials';
 
-// Extended types for NextAuth
 declare module "next-auth" {
   interface Session {
     user: {
@@ -87,25 +84,21 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if (!user.email) return false;
       
-      // Always allow Google login - Google already verifies emails
       if (account?.provider === "google") {
-        // Check if user exists in our DB
         const existingUser = await prismaClient.user.findUnique({
           where: { email: user.email }
         });
         
         if (!existingUser) {
-          // Create new user with verified email
           await prismaClient.user.create({
             data: {
               email: user.email,
               name: user.name || "",
               provider: 'Google' as Provider,
-              emailVerified: new Date() // Mark as verified since Google already verified it
+              emailVerified: new Date() 
             }
           });
         } else if (!existingUser.emailVerified) {
-          // If user exists but email not verified, mark it as verified now
           await prismaClient.user.update({
             where: { id: existingUser.id },
             data: { emailVerified: new Date() }
@@ -114,7 +107,6 @@ export const authOptions: NextAuthOptions = {
         return true;
       }
       
-      // For credentials login, authorize() already checked email verification
       if (account?.provider === "credentials") {
         return true;
       }
@@ -135,7 +127,6 @@ export const authOptions: NextAuthOptions = {
     
     async jwt({ token, user }) {
       if (user) {
-        // Store the user ID in the token
         token.id = user.id;
         
         if (user.emailVerified) {

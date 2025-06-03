@@ -1,4 +1,3 @@
-// app/api/resend-verification/route.ts
 import { prismaClient } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
@@ -6,7 +5,6 @@ import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse JSON body safely
     let body;
     try {
       body = await request.json();
@@ -31,7 +29,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      // Don't reveal if user exists or not for security
       return NextResponse.json(
         { message: 'If your email exists in our system, a verification link has been sent' },
         { status: 200 }
@@ -45,12 +42,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate new verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const tokenExpiry = new Date();
-    tokenExpiry.setHours(tokenExpiry.getHours() + 24); // Token valid for 24 hours
+    tokenExpiry.setHours(tokenExpiry.getHours() + 24); 
 
-    // Update user with new token
     await prismaClient.user.update({
       where: { id: user.id },
       data: {
@@ -59,7 +54,6 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Send verification email
     await sendVerificationEmail(email, verificationToken);
 
     return NextResponse.json(

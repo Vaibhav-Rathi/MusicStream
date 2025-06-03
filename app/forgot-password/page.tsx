@@ -8,7 +8,6 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const baseUrl = process.env.NEXTAUTH_URL
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +15,7 @@ const ForgotPassword = () => {
     setMessage("");
 
     try {
-      const res = await axios.post(`${baseUrl}/api/forgot-password`, { email });
+      const res = await axios.post(`/api/forgot-password`, { email });
       setMessage(res.data.message);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
