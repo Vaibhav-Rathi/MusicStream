@@ -34,6 +34,9 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: NextAuthOptions = {
+  // Add the secret - REQUIRED in production
+  secret: process.env.NEXTAUTH_SECRET,
+  
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -46,72 +49,97 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
-        const user = await prismaClient.user.findUnique({
-          where: {
-            email: credentials.email
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            console.log("Missing credentials");
+            return null;
           }
-        });
 
-        if (!user || !user.password) {
+          const user = await prismaClient.user.findUnique({
+            where: {
+              email: credentials.email
+            }
+          });
+
+          if (!user) {
+            console.log("User not found:", credentials.email);
+            return null;
+          }
+
+          if (!user.password) {
+            console.log("User has no password (probably OAuth user):", credentials.email);
+            return null;
+          }
+
+          if (user.provider === 'Credentials' && !user.emailVerified) {
+            console.log("Email not verified for:", credentials.email);
+            throw new Error("EmailNotVerified");
+          }
+
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+
+          if (!isPasswordValid) {
+            console.log("Invalid password for:", credentials.email);
+            return null;
+          }
+
+          console.log("Successful login for:", credentials.email);
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            emailVerified: user.emailVerified
+          };
+        } catch (error) {
+          console.error("Error in authorize:", error);
+          // Re-throw specific errors like EmailNotVerified
+          if (error instanceof Error && error.message === "EmailNotVerified") {
+            throw error;
+          }
+          // For other errors, return null
           return null;
         }
-
-        if (user.provider === 'Credentials' && !user.emailVerified) {
-          throw new Error("EmailNotVerified");
-        }
-
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-
-        if (!isPasswordValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          emailVerified: user.emailVerified
-        };
       }
     })
   ],
 
   callbacks: {
     async signIn({ user, account }) {
-      if (!user.email) return false;
-      
-      if (account?.provider === "google") {
-        const existingUser = await prismaClient.user.findUnique({
-          where: { email: user.email }
-        });
+      try {
+        if (!user.email) return false;
         
-        if (!existingUser) {
-          await prismaClient.user.create({
-            data: {
-              email: user.email,
-              name: user.name || "",
-              provider: 'Google' as Provider,
-              emailVerified: new Date() 
-            }
+        if (account?.provider === "google") {
+          const existingUser = await prismaClient.user.findUnique({
+            where: { email: user.email }
           });
-        } else if (!existingUser.emailVerified) {
-          await prismaClient.user.update({
-            where: { id: existingUser.id },
-            data: { emailVerified: new Date() }
-          });
+          
+          if (!existingUser) {
+            await prismaClient.user.create({
+              data: {
+                email: user.email,
+                name: user.name || "",
+                provider: 'Google' as Provider,
+                emailVerified: new Date() 
+              }
+            });
+          } else if (!existingUser.emailVerified) {
+            await prismaClient.user.update({
+              where: { id: existingUser.id },
+              data: { emailVerified: new Date() }
+            });
+          }
+          return true;
         }
-        return true;
+        
+        if (account?.provider === "credentials") {
+          return true;
+        }
+        
+        return false;
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return false;
       }
-      
-      if (account?.provider === "credentials") {
-        return true;
-      }
-      
-      return false;
     },
     
     async session({ session, token }) {
@@ -144,6 +172,10 @@ export const authOptions: NextAuthOptions = {
   },
   
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+
+  // Add these for better debugging in production
+  debug: process.env.NODE_ENV === "development"
 };

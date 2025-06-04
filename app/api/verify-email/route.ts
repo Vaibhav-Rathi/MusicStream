@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
+    console.log(new Date());
+    
     const { searchParams } = new URL(request.url);
     const token = searchParams.get('token');
 

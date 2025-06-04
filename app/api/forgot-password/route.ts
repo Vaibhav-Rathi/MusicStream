@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
+
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
